@@ -1,8 +1,5 @@
 pipeline{
     agent any
-    trigger{
-        pollSCM('* * * * *')
-    }
     environment{
         SONAR_URL = 'http://localhost:9000'
         PROJECT_KEY = 'DevSecOps-Pipeline'
