@@ -18,7 +18,7 @@ pipeline{
             steps{
                 echo 'Running SonarQube Analysis...'
                 withSonarQubeEnv('SonarQube'){
-                    sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY'
+                   sh 'sonar-scanner -Dsonar.login=$SONAR_TOKEN'
                 }
             }
         }
