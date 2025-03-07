@@ -20,7 +20,7 @@ pipeline{
                 withSonarQubeEnv('SonarQube'){
                    sh """
                         export SONAR_TOKEN=${SONAR_TOKEN}
-                        SonarScanner \
+                        sonar-scanner \
                         -Dsonar.projectKey=$PROJECT_KEY \
                         -Dsonar.sources=. \
                         -Dsonar.login=${env.SONAR_TOKEN} \
