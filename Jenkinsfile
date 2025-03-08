@@ -33,8 +33,7 @@ pipeline{
                     npx sonarqube-scanner \
                       -Dsonar.projectKey=${PROJECT_KEY} \
                       -Dsonar.sources=. \
-                      -Dsonar.exclusions=dependency-check-report.html \
-                      -Dsonar.exclusions=trivy-report.txt \
+                      -Dsonar.exclusions=dependency-check-report.html,trivy-report.html \
                       -Dsonar.host.url=${SONARQUBE_URL} \
                       -Dsonar.login=${SONARQUBE_TOKEN}
                     '''
@@ -63,7 +62,7 @@ pipeline{
                 script{
                     echo 'Running Trivy Scan...'
                     def buildNumber = env.BUILD_NUMBER
-                    sh "trivy image quasarcelestio/devsecops:build-${buildNumber} > trivy-report.txt"
+                    sh "trivy image --format html --output trivy-report.html quasarcelestio/devsecops:build-${buildNumber}"
                 }
             }
         }
@@ -75,6 +74,15 @@ pipeline{
                     def buildNumber = env.BUILD_NUMBER
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhubcred') {
                         sh "docker push quasarcelestio/devsecops:build-${buildNumber}"
+                    }
+                }
+            }
+            post {
+                always {
+                    echo 'Removing Docker Image from local...'
+                    script {
+                        def buildNumber = env.BUILD_NUMBER
+                        sh "docker rmi quasarcelestio/devsecops:build-${buildNumber}"
                     }
                 }
             }
