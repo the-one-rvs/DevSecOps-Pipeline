@@ -2,7 +2,7 @@ pipeline{
     agent any
     triggers {
         githubPush()  
-        // pollSCM('H/2 * * * *')
+        pollSCM('* * * * *')
     }
     environment{
         SONAR_URL = 'http://localhost:9000'
@@ -14,7 +14,7 @@ pipeline{
         stage('Github Repo'){
             steps{
                 echo 'Pulling the project from Github...'
-                git branch: 'master', url: 'https://github.com/the-one-rvs/DevSecOps-Pipeline.git'
+                git changelog: false, poll: false, url: 'https://github.com/the-one-rvs/DevSecOps-Pipeline.git'
             }
         }
         stage('SonarQube Analysis'){
