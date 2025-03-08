@@ -1,7 +1,7 @@
 pipeline{
     agent any
     triggers {
-        pollSCM('H/2 * * * *') // Sirf naye commits check karega har 2 min me
+        githubPush()  
     }
     environment{
         SONAR_URL = 'http://localhost:9000'
