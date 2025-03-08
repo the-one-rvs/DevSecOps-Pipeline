@@ -11,6 +11,23 @@ pipeline{
         SONARQUBE_URL = 'http://localhost:9000'
     }
     stages{
+        stage('Check for Changes') {
+            steps {
+                script {
+                    def lastCommit = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                    sh "git fetch origin ${GIT_BRANCH}"
+                    def newCommit = sh(script: "git rev-parse FETCH_HEAD", returnStdout: true).trim()
+                    
+                    if (lastCommit == newCommit) {
+                        echo "No new commits found. Aborting build."
+                        currentBuild.result = 'ABORTED'
+                        error("Build aborted due to no changes.")
+                    } else {
+                        echo "New commits detected. Proceeding with build..."
+                    }
+                }
+            }
+        }
         stage('Github Repo'){
             steps{
                 echo 'Pulling the project from Github...'
