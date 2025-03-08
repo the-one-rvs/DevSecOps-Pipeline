@@ -1,7 +1,7 @@
 pipeline{
     agent any
     triggers {
-        githubPush() // 🚀 Auto-build on every commit
+        pollSCM('H/2 * * * *') // Sirf naye commits check karega har 2 min me
     }
     environment{
         SONAR_URL = 'http://localhost:9000'
