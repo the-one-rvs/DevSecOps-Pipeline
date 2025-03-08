@@ -2,7 +2,7 @@ pipeline{
     agent any
     environment{
         SONAR_URL = 'http://localhost:9000'
-        PROJECT_KEY = 'DevSecOps-Pipeline'
+        PROJECT_KEY = 'devsecops-project'
         SONAR_TOKEN = credentials('sonar-token')
         SONARQUBE_URL = 'http://localhost:9000'
     }
