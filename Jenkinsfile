@@ -3,9 +3,8 @@ pipeline{
     environment{
         SONAR_URL = 'http://localhost:9000'
         PROJECT_KEY = 'DevSecOps-Pipeline'
-        REPORT_TXT = 'sonar-report.txt'
-        REPORT_HTML = 'sonar-report.html'
         SONAR_TOKEN = credentials('sonar-token')
+        SONARQUBE_URL = 'http://localhost:9000'
     }
     stages{
         stage('Github Repo'){
@@ -18,27 +17,16 @@ pipeline{
             steps{
                 echo 'Running SonarQube Analysis...'
                 withSonarQubeEnv('SonarQube'){
-                   sh """
-                        export SONAR_TOKEN=${SONAR_TOKEN}
-                        sonar-scanner \
-                        -Dsonar.projectKey=$PROJECT_KEY \
-                        -Dsonar.sources=. \
-                        -Dsonar.login=${env.SONAR_TOKEN} \
-                        -Dsonar.qualitygate.wait=true
-                    """
+                   sh '''
+                    npx sonarqube-scanner \
+                      -Dsonar.projectKey=$(PROJECT_KEY) \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=${SONARQUBE_URL} \
+                      -Dsonar.login=${SONARQUBE_TOKEN}
+                    '''
                 }
             }
         }
-        stage('Fetch SonarQube Report ') {
-            steps {
-                script {
-                    echo 'Fetching SonarQube Report...'
-                    
-                    sh "curl -s '$SONAR_URL/api/issues/search?componentKeys=$PROJECT_KEY' | jq '.' > $REPORT_TXT"
-
-                    sh "curl -s '$SONAR_URL/dashboard?id=$PROJECT_KEY' > $REPORT_HTML"
-                }
-            }
-        }
+        
     }
 }
