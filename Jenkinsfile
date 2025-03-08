@@ -19,7 +19,7 @@ pipeline{
                 withSonarQubeEnv('SonarQube'){
                    sh '''
                     npx sonarqube-scanner \
-                      -Dsonar.projectKey=$(PROJECT_KEY) \
+                      -Dsonar.projectKey=${PROJECT_KEY} \
                       -Dsonar.sources=. \
                       -Dsonar.host.url=${SONARQUBE_URL} \
                       -Dsonar.login=${SONARQUBE_TOKEN}
