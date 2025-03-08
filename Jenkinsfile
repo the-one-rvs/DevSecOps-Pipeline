@@ -2,7 +2,7 @@ pipeline{
     agent any
     triggers {
         githubPush()  
-        pollSCM('H/2 * * * *')
+        // pollSCM('H/2 * * * *')
     }
     environment{
         SONAR_URL = 'http://localhost:9000'
