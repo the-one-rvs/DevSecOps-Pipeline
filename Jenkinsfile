@@ -24,7 +24,7 @@ pipeline{
                 sh 'npm install'
             }
         }
-        
+
         stage('SonarQube Analysis'){
             steps{
                 echo 'Running SonarQube Analysis...'
@@ -33,6 +33,7 @@ pipeline{
                     npx sonarqube-scanner \
                       -Dsonar.projectKey=${PROJECT_KEY} \
                       -Dsonar.sources=. \
+                      -Dsonar.exclusions=dependency-check-report.html \
                       -Dsonar.host.url=${SONARQUBE_URL} \
                       -Dsonar.login=${SONARQUBE_TOKEN}
                     '''
