@@ -63,7 +63,7 @@ pipeline{
                 script{
                     echo 'Running Trivy Scan...'
                     def buildNumber = env.BUILD_NUMBER
-                    sh "trivy quasarcelestio/devsecops:build-${buildNumber} > trivy-report.txt"
+                    sh "trivy image quasarcelestio/devsecops:build-${buildNumber} > trivy-report.txt"
                 }
             }
         }
