@@ -74,7 +74,7 @@ pipeline{
                 script{
                     def buildNumber = env.BUILD_NUMBER
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhubcred') {
-                        sh "docker push quasarcelestio/devsecops:built-${buildNumber}"
+                        sh "docker push quasarcelestio/devsecops:build-${buildNumber}"
                     }
                 }
             }
