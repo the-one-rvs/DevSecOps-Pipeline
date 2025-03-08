@@ -34,6 +34,7 @@ pipeline{
                       -Dsonar.projectKey=${PROJECT_KEY} \
                       -Dsonar.sources=. \
                       -Dsonar.exclusions=dependency-check-report.html \
+                      -Dsonar.exclusions=trivy-report.txt \
                       -Dsonar.host.url=${SONARQUBE_URL} \
                       -Dsonar.login=${SONARQUBE_TOKEN}
                     '''
@@ -44,6 +45,38 @@ pipeline{
         stage('DP Check'){
             steps{
                 dependencyCheck additionalArguments: '--format HTML', odcInstallation: 'OWASP Dependecy-Check'
+            }
+        }
+
+        stage('DockerImage Create'){
+            steps{
+                script{
+                    echo 'Building Docker Image...'
+                    def buildNumber = env.BUILD_NUMBER
+                    sh "docker build -t quasarcelestio/devsecops:build-${buildNumber} ."
+                }
+            }
+        }
+
+        stage ('Trivy Scan'){
+            steps{
+                script{
+                    echo 'Running Trivy Scan...'
+                    def buildNumber = env.BUILD_NUMBER
+                    sh "trivy quasarcelestio/devsecops:build-${buildNumber} > trivy-report.txt"
+                }
+            }
+        }
+
+        stage('DockerImage Push'){
+            steps{
+                echo 'Pushing Docker Image to DockerHub...'
+                script{
+                    def buildNumber = env.BUILD_NUMBER
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhubcred') {
+                        sh "docker push quasarcelestio/devsecops:built-${buildNumber}"
+                    }
+                }
             }
         }
         
