@@ -1,5 +1,8 @@
 pipeline{
     agent any
+    triggers {
+        githubPush() // 🚀 Auto-build on every commit
+    }
     environment{
         SONAR_URL = 'http://localhost:9000'
         PROJECT_KEY = 'devsecops-project'
