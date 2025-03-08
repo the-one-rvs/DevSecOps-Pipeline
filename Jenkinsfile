@@ -17,6 +17,14 @@ pipeline{
                 git changelog: false, poll: false, url: 'https://github.com/the-one-rvs/DevSecOps-Pipeline.git'
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                sh 'npm install'
+            }
+        }
+        
         stage('SonarQube Analysis'){
             steps{
                 echo 'Running SonarQube Analysis...'
@@ -29,6 +37,12 @@ pipeline{
                       -Dsonar.login=${SONARQUBE_TOKEN}
                     '''
                 }
+            }
+        }
+
+        stage('DP Check'){
+            steps{
+                dependencyCheck additionalArguments: '--format HTML', odcInstallation: 'OWASP Dependecy-Check'
             }
         }
         
