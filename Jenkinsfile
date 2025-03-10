@@ -9,8 +9,6 @@ pipeline {
         PROJECT_KEY = 'devsecops-project'
         SONAR_TOKEN = credentials('sonar-token')
         SONARQUBE_URL = 'http://localhost:9000'
-        DEPENDENCY_TRACK_URL = 'http://localhost:8080'  // Dependency Track Server
-        DEPENDENCY_TRACK_API_KEY = credentials('api-key-dependency-track')  // Store API Key in Jenkins Credentials
     }
     stages {
         stage('Github Repo') {
@@ -65,30 +63,6 @@ pipeline {
                     echo 'Running Trivy Scan...'
                     def buildNumber = env.BUILD_NUMBER
                     sh "trivy image --format html --output trivy-report.html quasarcelestio/devsecops:build-${buildNumber}"
-                }
-            }
-        }
-
-        stage('Generate SBOM') {
-            steps {
-                script {
-                    echo 'Generating SBOM using Trivy...'
-                    sh 'trivy sbom --format cyclonedx --output sbom.json .'
-                    archiveArtifacts artifacts: 'sbom.json', fingerprint: true
-                }
-            }
-        }
-
-        stage('Upload SBOM to Dependency Track') {
-            steps {
-                script {
-                    echo 'Uploading SBOM to OWASP Dependency Track...'
-                    sh """
-                        curl -X PUT "$DEPENDENCY_TRACK_URL/api/v1/bom" \
-                            -H "X-Api-Key: $DEPENDENCY_TRACK_API_KEY" \
-                            -H "Content-Type: application/json" \
-                            --data-binary @sbom.json
-                    """
                 }
             }
         }
