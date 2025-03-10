@@ -82,13 +82,11 @@ pipeline{
             }
         }
 
-        
         stage('Generate SBOM') {
             steps {
                 script {
                     echo 'Generating SBOM using Trivy...'
-                    def buildNumber = env.BUILD_NUMBER
-                    sh "trivy sbom --format cyclonedx --output sbom.json quasarcelestio/devsecops:build-${buildNumber}"
+                    sh 'trivy sbom --format cyclonedx --output sbom.json .'
                     archiveArtifacts artifacts: 'sbom.json', fingerprint: true
                 }
             }
@@ -99,16 +97,14 @@ pipeline{
                 script {
                     echo 'Uploading SBOM to OWASP Dependency Track...'
                     sh """
-                        curl -X POST "$DEPENDENCY_TRACK_URL/api/v1/bom" \
+                        curl -X PUT "$DEPENDENCY_TRACK_URL/api/v1/bom" \
                             -H "X-Api-Key: $DEPENDENCY_TRACK_API_KEY" \
                             -H "Content-Type: application/json" \
-                            --data-binary @sbom.json \
-                            -d '{"project":"8606a150-e9b5-4e59-9803-2c89c379fa93", "autoCreate": true}'
+                            --data-binary @sbom.json
                     """
                 }
             }
         }
-        
             
         post {
             always {
