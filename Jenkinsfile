@@ -33,7 +33,7 @@ pipeline {
                     npx sonarqube-scanner \
                       -Dsonar.projectKey=${PROJECT_KEY} \
                       -Dsonar.sources=. \
-                      -Dsonar.exclusions=dependency-check-report.html,trivy-report.html \
+                      -Dsonar.exclusions=dependency-check-report.html,trivy-report.json \
                       -Dsonar.host.url=${SONARQUBE_URL} \
                       -Dsonar.login=${SONARQUBE_TOKEN}
                     '''
@@ -62,7 +62,7 @@ pipeline {
                 script {
                     echo 'Running Trivy Scan...'
                     def buildNumber = env.BUILD_NUMBER
-                    sh "trivy image --format html --output trivy-report.html quasarcelestio/devsecops:build-${buildNumber}"
+                    sh "trivy image --format json --output trivy-report.json quasarcelestio/devsecops:build-${buildNumber}"
                 }
             }
         }
