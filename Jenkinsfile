@@ -15,7 +15,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo 'Pulling the project from Github...'
-                git url: 'https://github.com/the-one-rvs/DevSecOps-Pipeline.git'
+                git changelog: false, poll: false, url: 'https://github.com/the-one-rvs/DevSecOps-Pipeline.git'
             }
         }
 
