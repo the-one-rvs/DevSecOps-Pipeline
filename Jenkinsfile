@@ -52,7 +52,7 @@ pipeline {
                 script {
                     echo 'Building Docker Image...'
                     def buildNumber = env.BUILD_NUMBER
-                    sh "docker build -t quasarcelestio/devsecops:build-${buildNumber} ."
+                    sh "docker build -t quasarcelestio/devsecops:0.1.${buildNumber} ."
                 }
             }
         }
